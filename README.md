@@ -1,4 +1,4 @@
-# VISIOSCAN Driver for ROS2
+# ROS2 Driver for VISIOSCAN
 
 The document describes the usage of the driver for BEA VISIOSCAN laser scanner.
 
