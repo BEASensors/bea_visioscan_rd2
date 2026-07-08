@@ -1,0 +1,8 @@
+bea_power:
+  visioscan_node:
+    ros__parameters:
+      frame_id: "laser"
+      topic_id: "scan"
+      laser_ip: "192.168.1.2" # NOTE: set it to sensor's ip
+      laser_port: 3050 # NOTE: set it to sensor's port
+      laser_direction: 0 # 0: normal mounted, 1: upside-down

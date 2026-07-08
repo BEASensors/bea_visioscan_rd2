@@ -1,93 +1,104 @@
-# bea_visioscan_rd2
+# ROS2 Driver for VISIOSCAN
+
+The document describes the usage of the driver for BEA VISIOSCAN laser scanner.
+
+The driver is based upon the [Boost Asio library](http://www.boost.org)
+
+## Supported LIDAR
+
+| Lidar Model            |
+| ---------------------- |
+| Visioscan RD           |
+
+Visit following website for more details about Visioscan laser scanner: <https://asia.beasensors.com/en/product/lzr-visioscan-rd/>
+
+## Tested environment
+
+The driver is only tested within a VirtualBox VM installing environment below:
+
+OS: [Ubuntu 22.04.5 LTS (Jammy Jellyfish)](https://www.releases.ubuntu.com/22.04/)
+
+ROS2: [Humble Hawksbill](https://docs.ros.org/en/humble/)
+
+## Usage with ROS2
+
+### Create a ROS2 workspace
+
+1. For example, choose the directory name `ros2_ws`, for "development workspace" :
+
+   ```bash
+   mkdir -p ~/ros2_ws/src
+   cd ~/ros2_ws/src
+   mkdir visioscan
+   ```
+
+2. Copy & Paste project files into `/ros2_ws/src/visioscan` directory
+   
+
+### Parameters
+
+The parameters for configuring laser scanner are listed as below. You need to change the parameters in the file `/config/params.yaml` corresponding to the configuration in the laser scanner.
+
+| Parameter       | Description |
+| --------------- | ----------- |
+| frame_id        | Frame ID for LaserScan msg                                 |
+| topic_id        | Topic ID for the publisher                                 |
+| laser_ip        | IP address of laser scanner                                |
+| laser_port      | Ethernet port number of laser scannner                     |
+| scan_frequency  | Frequency of laser scanner                                 |
+| laser_direction | Indicate if laser scanner is normal mounted or upside down |
+
+### Compile & install visioscan package
+
+1. Build visioscan package
+   From the root of your workspace `ros2_ws`, you can now build visioscan package using the command:
+
+   ```bash
+   cd ~/ros2_ws/
+   colcon build --packages-select visioscan
+   ```
+
+2. Package environment setup
+    
+    ```bash
+    source ./install/setup.bash
+    ```
+
+    Note: Add permanent workspace environment variables.
+    It's convenient if the ROS2 environment variables are automatically added to your bash session every time a new terminal is launched:
+
+    ```bash
+    echo "source ros2_ws/install/setup.bash" >> ~/.bashrc
+    source ~/.bashrc
+    ```
+
+### Run visioscan
+
+You can run `visioscan` node with following steps, or make a [Quick start](#quick-start)
+
+#### Run visioscan node
+
+   ```bash
+   ros2 run visioscan visioscan_node --ros-args --params-file ~/ros2_ws/src/visioscan/config/params.yaml
+   ```
+
+#### Run RViz
+
+You can run `RViz` package in ROS2 to visualize the point cloud. Open a new terminal and run the following command:
+
+   ```bash
+   ros2 run rviz2 rviz2
+   ```
+   Note: Please make sure that the frame ID and scan topic ID are corresponding to that you set in the code or the config file.
 
 
+### Quick start
 
-## Getting started
+After compiled and installed the package, run the following command to make a quick start:
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+    ```bash
+    ros2 launch visioscan visioscan_launch.py
+    ```
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+This starts the `RViz` and the `visioscan `driver and you should see the cloud point output of the laser scanner.
 
-## Add your files
-
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.com/sraubea/bea_visioscan_rd2.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-* [Set up project integrations](https://gitlab.com/sraubea/bea_visioscan_rd2/-/settings/integrations)
-
-## Collaborate with your team
-
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
