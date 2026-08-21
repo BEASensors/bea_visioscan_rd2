@@ -22,6 +22,8 @@ ROS2: [Humble Hawksbill](https://docs.ros.org/en/humble/)
 
 ## Usage with ROS2
 
+The README content is referring to a repository called visioscan, when cloning from gitlab the folder name will be bea_visioscan_rd2 and some path need therefore to be adjusted.
+
 ### Create a ROS2 workspace
 
 1. For example, choose the directory name `ros2_ws`, for "development workspace" :
