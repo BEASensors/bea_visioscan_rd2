@@ -1,4 +1,4 @@
-# ROS2 Driver for VISIOSCAN
+# VISIOSCAN Driver for ROS2
 
 The document describes the usage of the driver for BEA VISIOSCAN laser scanner.
 
@@ -79,8 +79,14 @@ You can run `visioscan` node with following steps, or make a [Quick start](#quic
 #### Run visioscan node
 
    ```bash
-   ros2 run visioscan visioscan_node --ros-args --params-file ~/ros2_ws/src/visioscan/config/params.yaml
+   ros2 run visioscan visioscan_node --ros-args --params-file ~/ros2_ws/src/visioscan/config/params.yaml -- __ns:=/bea_power
    ```
+
+   Note: the `-- __ns:=/bea_power` is required so the node's namespace matches the nested
+   layout of `config/params.yaml` (`bea_power/visioscan_node/ros__parameters`). Without it the
+   node falls back to its hardcoded default IP (`192.168.1.2`) and ignores the `laser_ip`
+   you set in the YAML. (`ros2 launch visioscan visioscan_launch.py` already sets this namespace
+   via `namespace='bea_power'`, which is why `ros2 launch` worked but `ros2 run` did not.)
 
 #### Run RViz
 

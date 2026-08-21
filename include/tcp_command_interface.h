@@ -13,6 +13,7 @@
 #include <condition_variable>
 #include <deque>
 #include <array>
+#include <atomic>
 #include "protocol_info.h"
 #include "packet_structure.h"
 #include "common_libs.h"
@@ -39,8 +40,11 @@ public:
     void SetScanDataDirection(int param);
     int StartScanOutput();
     int StopScanOutput();
-    int sys_cmd_realtime_;
-    int sys_cmd_resp_;
+    // Atomic: written by the Boost ASIO I/O thread (HandleTcpSocketRead)
+    // and read by the main thread (Get* commands). Prevents a data race
+    // that could corrupt angle/range parameters used by every LaserScan.
+    std::atomic<int> sys_cmd_realtime_;
+    std::atomic<int> sys_cmd_resp_;
 
     const BEA_PARAMETER_INFO GetParameters() const { return parameterInfo_; }
 

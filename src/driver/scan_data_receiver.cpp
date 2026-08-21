@@ -319,7 +319,9 @@ void ScanDataReceiver::disconnect()
             udp_socket_->close();
         }
         io_service_.stop();
-        if(boost::this_thread::get_id() != io_service_thread_.get_id())
+        // joinable() guard makes disconnect() idempotent so it is safe to call
+        // again during an auto-reconnect without a double-join (UB).
+        if(io_service_thread_.joinable() && boost::this_thread::get_id() != io_service_thread_.get_id())
         {
             io_service_thread_.join();
         }
@@ -334,7 +336,7 @@ bool ScanDataReceiver::checkConnection()
 {
     if(!isConnected())
         return false;
-    if((std::time(0) - last_data_time_) > 2)
+    if((std::time(0) - last_data_time_) > 5)
     {
         std::cerr << "Error: receive distance data timeout, would disconnect scanner.." << std::endl;
         disconnect();

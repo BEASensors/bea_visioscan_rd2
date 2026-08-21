@@ -33,12 +33,30 @@ bool VISIOSCANDriver::connect(const std::string hostname, int port)
         return false;
     }
 
-    command_interface_->GetScanDataDirection();
-    command_interface_->GetAngularResolution();
-    command_interface_->GetAngleRange();
-    command_interface_->GetLidarDataPacketType();
-    command_interface_->GetScanSkip();
-    if(command_interface_->GetProtocolType() != 1)
+    // Read device parameters. They are populated asynchronously by the Boost
+    // ASIO I/O thread inside TcpCommandInterface (see HandleTcpSocketRead).
+    // A transient timeout must NOT be silently accepted: it would leave
+    // angularResolution / skipSpots at their 0.0 default, which makes
+    // deltaAngle = 0 -> LaserScan.angle_increment = 0.0 and breaks every
+    // downstream node. Retry a few times; only proceed if all reads succeed.
+    // On failure return false so the caller (bea_node work_loop) can reconnect
+    // cleanly instead of publishing a broken (0-angle) scan.
+    const int kParamRetries = 3;
+    bool params_ok = false;
+    for(int attempt = 0; attempt < kParamRetries && !params_ok; ++attempt)
+    {
+        int r_dir   = command_interface_->GetScanDataDirection();
+        int r_res   = command_interface_->GetAngularResolution();
+        int r_rng   = command_interface_->GetAngleRange();
+        int r_pkt   = command_interface_->GetLidarDataPacketType();
+        int r_skip  = command_interface_->GetScanSkip();
+        int r_proto = command_interface_->GetProtocolType();
+        if(r_dir == 1 && r_res == 1 && r_rng == 1 && r_pkt == 1 && r_skip == 1 && r_proto == 1)
+        {
+            params_ok = true;
+        }
+    }
+    if(!params_ok)
     {
         return false;
     }
