@@ -10,6 +10,7 @@
 #include <ctime>
 #include <cstdio>
 #include <ctype.h>
+#include <cstdint>
 
 #define DEBUG_POS std::to_string(__FILE__) + "-" + std::to_string(__FUNCTION__) + "-" + std::to_string(__LINE__) + "--"
 #define DEBUG_POS_FL std::to_string(__FUNCTION__) + "-" + std::to_string(__LINE__) + "--"

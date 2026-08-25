@@ -63,7 +63,7 @@ void TcpCommandInterface::HandleTcpSocketRead(const boost::system::error_code& e
     printf("@HandleTcpSocketRead bytes_transferred = %ld\n", bytes_transferred);
     printf("@tcp_buffer_ size = %d\n", int(tcp_buffer_.size()));
     char *src = &tcp_buffer_[0];
-    printf("@HandleTcpSocketRead sys_cmd_realtime_ = %d\n", sys_cmd_realtime_);
+    printf("@HandleTcpSocketRead sys_cmd_realtime_ = %d\n", sys_cmd_realtime_.load());
     if(_size > 64) _size = 64;
     if(sys_cmd_realtime_ == SYS_CMD_REALTIME_GET_ANGULAR_RESOLUTION)
     {

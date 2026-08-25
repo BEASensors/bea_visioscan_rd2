@@ -22,17 +22,14 @@ public:
         scan_pub = this->create_publisher<sensor_msgs::msg::LaserScan>(topic_id, rclcpp::QoS(rclcpp::KeepLast(100)));
 
         driver = new VISIOSCANDriver();
-
         std::cout << "Connecting to scanner at " << laser_ip << " ... " << std::endl;
-        if(driver->connect(laser_ip, laser_port))
-        {
-            std::cout << "@BEANode::connect OK" << std::endl;
-        }
-        else
+        if(!driver->connect(laser_ip, laser_port))
         {
             std::cout << "Connecting to scanner at " << laser_ip << ":" << laser_port << " failed!" << std::endl;
+            delete driver; driver = nullptr;
             return -1;
         }
+        std::cout << "@BEANode::connect OK" << std::endl;
 
         auto params = driver->GetParameters();
         float angleMin, angleMax, deltaAngle;
@@ -41,8 +38,8 @@ public:
         if(params.scanDataDirection == 0)
         {
 #if MDI_PACKET_HEADER_SYNC_0 == 0xBE && MDI_PACKET_HEADER_SYNC_1 == 0xA0
-            angleMin = (params.stopAngle - 90.0) * TO_RADIAN;
-            angleMax = (params.startAngle - 90.0) * TO_RADIAN;
+            angleMin = params.stopAngle * TO_RADIAN;
+            angleMax = params.startAngle * TO_RADIAN;
             deltaAngle = -angleResol * (skipSpots + 1) * TO_RADIAN;
 #elif MDI_PACKET_HEADER_SYNC_0 == 0x4C && MDI_PACKET_HEADER_SYNC_1 == 0x45
             angleMin = (-params.startAngle) * TO_RADIAN;
@@ -53,8 +50,8 @@ public:
         else
         {
 #if MDI_PACKET_HEADER_SYNC_0 == 0xBE && MDI_PACKET_HEADER_SYNC_1 == 0xA0
-            angleMin = (params.startAngle - 90.0) * TO_RADIAN;
-            angleMax = (params.stopAngle - 90.0) * TO_RADIAN;
+            angleMin = params.startAngle * TO_RADIAN;
+            angleMax = params.stopAngle * TO_RADIAN;
             deltaAngle = angleResol * (skipSpots + 1) * TO_RADIAN;
 #elif MDI_PACKET_HEADER_SYNC_0 == 0x4C && MDI_PACKET_HEADER_SYNC_1 == 0x45
             angleMin = (-params.stopAngle) * TO_RADIAN;
@@ -124,7 +121,7 @@ public:
             rclcpp::spin_some(shared_from_this());
         }
 
-        if(driver) {delete driver; driver = nullptr;}
+        if(driver) { delete driver; driver = nullptr; }
         return 0;
     }
 
